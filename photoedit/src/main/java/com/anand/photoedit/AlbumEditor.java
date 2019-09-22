@@ -50,15 +50,21 @@ public class AlbumEditor
             // Write the string into RFC3339 format so it can be parsed
             //
 
-
+            int countUnderscore = 0;
             for (int i = 0; i < datetimeParts.length(); i++)
             {
+                if (countUnderscore == 2 && !Character.isDigit(datetimeParts.charAt(i)))
+                {
+                    break;
+                }
+
                 if (datetimeParts.charAt(i) == ' ')
                 {
                     sb.append("T");
                 }
                 else if (datetimeParts.charAt(i) == '_')
                 {
+                    countUnderscore++;
                     sb.append(":");
                 }
                 else 
@@ -67,7 +73,7 @@ public class AlbumEditor
                 }
             }
             sb.append("-08:00");
-            
+
             try 
             {
                 Timestamp timestamp = Timestamps.parse(sb.toString());
@@ -81,6 +87,10 @@ public class AlbumEditor
                 builder.build();
             }
             catch (ParseException e)
+            {
+                throw new RuntimeException(e);
+            }
+            catch (NumberFormatException e)
             {
                 throw new RuntimeException(e);
             }
